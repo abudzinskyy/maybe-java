@@ -24,7 +24,6 @@ javadoc {
     classpath = configurations.compile
 }
 
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
+if (hasProperty('buildScan')) {
+    buildScan { licenseAgreementUrl = 'https://gradle.com/terms-of-service'; licenseAgree = 'yes' }
 }
