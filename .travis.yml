@@ -1,8 +1,33 @@
 language: java
 
-os: linux
+sudo: false
 dist: trusty
-jdk: oraclejdk8
+
+matrix:
+  include:
+    - jdk: oraclejdk8
+    - jdk: oraclejdk9
+    - jdk: openjdk10
+    - jdk: openjdk11
+      env: DEPLOY=true
+    - jdk: openjdk12
+    - jdk: openjdk-13
+    - jdk: openjdk-ea
+  allow_failures:
+    - jdk: openjdk-13
+    - jdk: openjdk-ea
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
+
+before_install:
+  - export GRADLE_JAVA_HOME="$JAVA_HOME"
+  - unset _JAVA_OPTIONS
 
 script:
-  - ./gradlew build --scan -s
+  - ./gradlew check --info -Dorg.gradle.java.home="$GRADLE_JAVA_HOME"

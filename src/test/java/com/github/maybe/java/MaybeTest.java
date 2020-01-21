@@ -1,7 +1,6 @@
 package com.github.maybe.java;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Test;
@@ -146,29 +145,26 @@ public class MaybeTest {
 
     @Test
     public void testFilterTrue() {
-        Optional<Maybe<Integer>> filter = Maybe.of(1)
-                .filter(i -> i > 0);
+        Maybe<Integer> filter = Maybe.of(1).filter(i -> i > 0);
         assertTrue(filter.isPresent());
-        assertEquals(1, filter.get().get().intValue());
+        assertEquals(1, filter.get().intValue());
     }
 
     @Test
     public void testFilterFalse() {
-        Optional<Maybe<Integer>> filter = Maybe.of(1)
-                .filter(i -> i < 0);
-        assertSame(Optional.empty(), filter);
+        Maybe<Integer> filter = Maybe.of(1).filter(i -> i < 0);
+        assertSame(Maybe.empty(), filter);
     }
 
     @Test
     public void testFilterEmpty() {
         AtomicBoolean wasInvoked = new AtomicBoolean(false);
-        Optional<Maybe<Integer>> filter = Maybe.<Integer>empty()
+        Maybe<Integer> filter = Maybe.<Integer>empty()
                 .filter(i -> {
                     wasInvoked.set(true);
                     return i < 0;
                 });
-        assertTrue(filter.isPresent());
-        assertSame(Maybe.empty(), filter.get());
+        assertFalse(filter.isPresent());
         assertFalse(wasInvoked.get());
     }
 
@@ -176,13 +172,12 @@ public class MaybeTest {
     public void testFilterFailed() {
         AtomicBoolean wasInvoked = new AtomicBoolean(false);
         Maybe<Integer> source = Maybe.failure(new Exception());
-        Optional<Maybe<Integer>> filter = source
+        Maybe<Integer> filter = source
                 .filter(i -> {
                     wasInvoked.set(true);
                     return i < 0;
                 });
-        assertTrue(filter.isPresent());
-        assertSame(source, filter.get());
+        assertFalse(filter.isPresent());
         assertFalse(wasInvoked.get());
     }
 
